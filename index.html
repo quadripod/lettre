@@ -1,0 +1,176 @@
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+
+const ApologyLetterGenerator = () => {
+  const [step, setStep] = useState(-1);
+  const [formData, setFormData] = useState({
+    userName: '',
+    recipientName: '',
+    action: '',
+    regret: '',
+    lessons: '',
+    repair: ''
+  });
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const nextStep = () => setStep(step + 1);
+  const prevStep = () => setStep(step - 1);
+
+  const generateLetter = () => {
+    const letter = `
+Cher/Chère ${formData.recipientName},
+
+Je t'écris cette lettre pour m'excuser sincèrement de ce que j'ai fait :
+${formData.action}
+
+J'ai beaucoup réfléchi à mes actions et je regrette profondément :
+${formData.regret}
+
+De cette expérience, j'ai appris des leçons importantes :
+${formData.lessons}
+
+Je suis déterminé(e) à gérer différemment des situations similaires à l'avenir. J'aimerais pouvoir réparer le tort que je t'ai causé. Voici ce que je propose :
+${formData.repair}
+
+Je veux que tu saches que je respecte ton choix d'accepter ou non ces excuses, que ce soit maintenant, à l'avenir, ou jamais. Fais ce qui est le mieux pour toi. C'est moi qui t'ai fait du tort et je ne veux pas t'en faire davantage en te mettant la pression pour que tu acceptes mes excuses. N'hésite pas à me dire s'il y a autre chose que je peux faire pour arranger les choses.
+
+Sincèrement,
+${formData.userName}
+    `;
+    return letter.trim();
+  };
+
+  const savePDF = () => {
+    alert("La fonctionnalité de sauvegarde en PDF serait implémentée ici.");
+  };
+
+  const steps = [
+    { 
+      title: "Bienvenue", 
+      fields: [] 
+    },
+    { 
+      title: "Informations de base", 
+      fields: ["userName", "recipientName"],
+      guide: "Commencez par identifier les personnes impliquées dans cette situation. Votre nom sera utilisé pour signer la lettre, et le nom du destinataire pour personnaliser l'adresse."
+    },
+    { 
+      title: "Description de l'action", 
+      fields: ["action"],
+      guide: "Décrivez l'action ou la situation pour laquelle vous vous excusez. Soyez spécifique et honnête. Évitez de justifier vos actions à ce stade. Concentrez-vous sur les faits et leur impact sur l'autre personne. Par exemple : 'Je me suis emporté(e) et j'ai dit des choses blessantes lors de notre discussion de jeudi dernier.'"
+    },
+    { 
+      title: "Exprimer vos regrets", 
+      fields: ["regret"],
+      guide: "Exprimez sincèrement vos regrets. Réfléchissez à l'impact de vos actions sur l'autre personne et sur votre relation. Montrez que vous comprenez pourquoi vos actions étaient blessantes ou inappropriées. Par exemple : 'Je regrette profondément d'avoir perdu mon calme et d'avoir utilisé des mots blessants. Je réalise que mes paroles ont pu vous faire sentir dévalorisé(e) et ont endommagé la confiance entre nous.'"
+    },
+    { 
+      title: "Leçons apprises", 
+      fields: ["lessons"],
+      guide: "Réfléchissez aux leçons que vous avez tirées de cette expérience. Que feriez-vous différemment à l'avenir ? Comment allez-vous travailler sur vous-même pour éviter que cela ne se reproduise ? Par exemple : 'Cette situation m'a fait réaliser que je dois travailler sur ma gestion de la colère. J'ai appris l'importance d'écouter activement et de prendre du recul avant de réagir dans des situations stressantes.'"
+    },
+    { 
+      title: "Proposer une réparation", 
+      fields: ["repair"],
+      guide: "Proposez des moyens concrets de réparer le tort causé. Soyez spécifique et réaliste dans vos propositions. Montrez que vous êtes prêt(e) à faire des efforts pour reconstruire la confiance. Par exemple : 'Je voudrais vous proposer de discuter calmement de ce qui s'est passé, à un moment qui vous conviendra. Je m'engage également à suivre un cours de gestion du stress pour apprendre à mieux gérer mes émotions à l'avenir.'"
+    },
+    { 
+      title: "Votre lettre d'excuses", 
+      fields: [] 
+    }
+  ];
+
+  const renderStep = () => {
+    const currentStep = steps[step + 1];
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-6 rounded-t-lg">
+          <h2 className="text-2xl font-bold">{currentStep.title}</h2>
+          {step >= 0 && <Progress value={((step + 1) / (steps.length - 1)) * 100} className="mt-4" />}
+        </CardHeader>
+        <CardContent className="p-6">
+          {step === -1 ? (
+            <div className="space-y-4">
+              <p>Bienvenue dans le Générateur de Lettre d'Excuses. Cette application vous guidera à travers le processus de rédaction d'une lettre d'excuses sincère et réfléchie.</p>
+              <p>Voici comment cela fonctionne :</p>
+              <ol className="list-decimal list-inside space-y-2">
+                <li>Vous fournirez des informations de base sur vous et le destinataire.</li>
+                <li>Vous décrirez l'action pour laquelle vous vous excusez.</li>
+                <li>Vous exprimerez vos regrets et réfléchirez aux leçons apprises.</li>
+                <li>Vous proposerez des moyens de réparer le tort causé.</li>
+                <li>L'application générera une lettre d'excuses basée sur vos réponses.</li>
+              </ol>
+              <p>Ce processus vous aidera à structurer vos pensées et à créer une lettre d'excuses sincère et significative. Prenez votre temps pour réfléchir à chaque étape et soyez aussi honnête que possible dans vos réponses.</p>
+            </div>
+          ) : step < steps.length - 2 ? (
+            <>
+              <p className="mb-4 text-gray-700">{currentStep.guide}</p>
+              {currentStep.fields.map((field) => (
+                <div key={field} className="mb-4">
+                  {field.includes('Name') ? (
+                    <Input
+                      name={field}
+                      placeholder={field === 'userName' ? 'Votre nom' : 'Nom du destinataire'}
+                      value={formData[field]}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                    />
+                  ) : (
+                    <Textarea
+                      name={field}
+                      placeholder={`Réfléchissez et exprimez-vous ici...`}
+                      value={formData[field]}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border rounded"
+                      rows={8}
+                    />
+                  )}
+                </div>
+              ))}
+            </>
+          ) : (
+            <Textarea
+              value={generateLetter()}
+              readOnly
+              className="w-full p-2 border rounded"
+              rows={20}
+            />
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-between p-6 bg-gray-100 rounded-b-lg">
+          {step > -1 && (
+            <Button onClick={prevStep} variant="outline" className="flex items-center">
+              <ChevronLeft className="mr-2 h-4 w-4" /> Précédent
+            </Button>
+          )}
+          {step < steps.length - 2 ? (
+            <Button onClick={nextStep} className="flex items-center ml-auto">
+              {step === -1 ? "Commencer" : "Suivant"} <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button onClick={savePDF} className="flex items-center ml-auto">
+              Sauvegarder en PDF <Save className="ml-2 h-4 w-4" />
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex flex-col items-center justify-center p-4">
+      <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">Générateur de lettre d'excuses</h1>
+      {renderStep()}
+    </div>
+  );
+};
+
+export default ApologyLetterGenerator;
